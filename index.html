@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Envoyer un e-mail via Brevo API</title>
+</head>
+<body>
+  <h2>Envoyer un e-mail via Brevo API</h2>
+
+  <form id="emailForm">
+    <label for="senderName">Nom de l'expéditeur:</label><br>
+    <input type="text" id="senderName" name="senderName" required><br><br>
+
+    <label for="senderEmail">Email de l'expéditeur:</label><br>
+    <input type="email" id="senderEmail" name="senderEmail" required><br><br>
+
+    <label for="receiverEmail">Email du destinataire:</label><br>
+    <input type="email" id="receiverEmail" name="receiverEmail" required><br><br>
+
+    <label for="subject">Sujet:</label><br>
+    <input type="text" id="subject" name="subject" required><br><br>
+
+    <label for="htmlContent">Contenu HTML:</label><br>
+    <textarea id="htmlContent" name="htmlContent" required></textarea><br><br>
+
+    <button type="submit">Envoyer l'e-mail</button>
+  </form>
+
+  <script>
+    // Sélectionner le formulaire
+    const form = document.getElementById("emailForm");
+
+    // Ajouter un écouteur d'événements pour soumettre le formulaire
+    form.addEventListener("submit", function(event) {
+      event.preventDefault(); // Empêcher la soumission traditionnelle du formulaire
+
+      // Récupérer les valeurs du formulaire
+      const senderName = document.getElementById("senderName").value;
+      const senderEmail = document.getElementById("senderEmail").value;
+      const receiverEmail = document.getElementById("receiverEmail").value;
+      const subject = document.getElementById("subject").value;
+      const htmlContent = document.getElementById("htmlContent").value;
+
+      // Objet pour les données à envoyer via l'API
+      const emailData = {
+        sender: {
+          name: senderName,
+          email: senderEmail
+        },
+        to: [
+          {
+            email: receiverEmail,
+            name: "Destinataire"
+          }
+        ],
+        subject: subject,
+        htmlContent: htmlContent
+      };
+
+      // Effectuer la requête POST pour envoyer l'e-mail via l'API de Brevo
+      fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'api-key': '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',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(emailData) // Convertir l'objet en JSON
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('E-mail envoyé avec succès', data);
+        alert('E-mail envoyé avec succès!');
+      })
+      .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de l\'envoi de l\'e-mail.');
+      });
+    });
+  </script>
+</body>
+</html>
